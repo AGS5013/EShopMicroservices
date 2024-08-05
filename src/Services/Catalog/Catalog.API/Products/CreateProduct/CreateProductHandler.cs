@@ -1,5 +1,6 @@
 ﻿
 
+
 namespace Catalog.API.Products.CreateProduct;
 
 
@@ -8,12 +9,20 @@ public record CreateProductCommand(string Name, List<string> Category, string De
 
 public record CreateProductResult(Guid Id);
 
+public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+{
+    public CreateProductCommandValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty();
+    }
+}
 
-internal class CreateProductCommandHandler(IDocumentSession session) : ICommandHandler<CreateProductCommand, CreateProductResult>
+internal class CreateProductCommandHandler(IDocumentSession session ) : ICommandHandler<CreateProductCommand, CreateProductResult>
 {
     public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
         //create Product entity from command object
+
 
         var product = new Product
         {
@@ -29,7 +38,7 @@ internal class CreateProductCommandHandler(IDocumentSession session) : ICommandH
         await session.SaveChangesAsync(cancellationToken);
 
         //retun result
-        return new CreateProductResult(product.Id); 
+        return new CreateProductResult(product.Id);
     }
 }
 
